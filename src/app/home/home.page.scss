@@ -1,39 +1,81 @@
-// ============================================
-// ESTILOS DE USUARIO AUTENTICADO
-// ============================================
-
-.user-welcome {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 12px 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  
-  .welcome-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    
-    .welcome-text {
-      color: white;
-      font-size: 16px;
-      
-      strong {
-        font-weight: 700;
-      }
-    }
-    
-    ion-button {
-      --border-width: 2px;
-      --border-color: white;
-      --color: white;
-      --background-hover: rgba(255, 255, 255, 0.1);
-      font-weight: 600;
-      text-transform: uppercase;
-      font-size: 12px;
-    }
-  }
+// Para quitar espacio blanco arriba del banner y cubrir toda pantalla
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
+
+ion-content {
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  margin: 0;
+}
+
+
+//banner
+.hero-banner {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  min-height: 400px;
+  margin: 0; // Sin margen para eliminar espacio extra arriba
+  padding: 0;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+  display: block; // Elimina espacio bajo la imagen
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  padding: 2rem;
+}
+
+.hero-title {
+  font-size: clamp(1rem, 6vw, 5rem);
+  font-weight: 900;
+  font-family: 'Racing Sans One', system-ui, sans-serif;
+  margin: 0;
+  letter-spacing: 3px;
+  line-height: 1.2;
+  animation: fadeInDown 1s ease-out;
+  background: linear-gradient(135deg, rgb(23, 3, 3), rgb(166, 49, 3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(105, 15, 15, 0.849))
+    drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.13);
+  paint-order: stroke fill;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.hero-subtitle {
+  font-size: clamp(0.5rem, 2vw, 1.25rem); // la mitad que el original (1rem - 2.5rem)
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  margin: 1rem 0 2rem 0;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+  animation: fadeInUp 1s ease-out 0.3s both;
+}
+
 
 // Responsive para móvil
 @media (max-width: 576px) {
@@ -57,8 +99,9 @@
   }
 }
 
+
 // ============================================
-// TUS ESTILOS EXISTENTES
+// Estilos productos
 // ============================================
 
 .hero {
@@ -67,12 +110,6 @@
   max-height: 700px;
   overflow: hidden;
   position: relative;
-}
-
-.hero-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .product-section {
@@ -163,4 +200,27 @@
   font-size: 12px;
   color: #ff0000;
   margin-left: 5px;
+}
+
+// Animaciones
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

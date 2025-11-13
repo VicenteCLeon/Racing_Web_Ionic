@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import helmet from 'helmet';
 import express from 'express';
 import cors from 'cors';
 import sequelize from './database';
@@ -11,17 +12,37 @@ import orderRoutes from './routes/orderRoutes';             // ✅ AGREGAR
 import orderItemRoutes from './routes/orderItemRoutes';     // ✅ AGREGAR
 import cartRoutes from './routes/cartRoutes';               // ✅ AGREGAR
 import cartItemRoutes from './routes/cartItemRoutes';       // ✅ AGREGAR
+import rateLimit from 'express-rate-limit';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// Seguridad con headers HTTP estándar
+app.use(helmet());
 
+const PORT = process.env.PORT || 3000;
+// ============================================
+// LÍMITE DE PETICIONES
+// ============================================
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // límite de 100 peticiones por IP
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use(limiter);
 // ============================================
 // MIDDLEWARES
 // ============================================
 
+const allowedOrigins = ['http://localhost:8100', 'http://localhost:8101'];
 app.use(cors({
-  origin: ['http://localhost:8100', 'http://localhost:8101'],
-  credentials: true
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  credentials: true,
 }));
 
 app.use(express.json());
@@ -34,10 +55,10 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/orders', orderRoutes);                        // ✅ AGREGAR
-app.use('/api/order-items', orderItemRoutes);               // ✅ AGREGAR
-app.use('/api/carts', cartRoutes);                          // ✅ AGREGAR
-app.use('/api/cart-items', cartItemRoutes);                 // ✅ AGREGAR
+app.use('/api/orders', orderRoutes);                  // ✅ AGREGAR
+app.use('/api/order-items', orderItemRoutes);         // ✅ AGREGAR
+app.use('/api/carts', cartRoutes);                     // ✅ AGREGAR
+app.use('/api/cart-items', cartItemRoutes);            // ✅ AGREGAR
 
 // Ruta de prueba
 app.get('/', (req, res) => {

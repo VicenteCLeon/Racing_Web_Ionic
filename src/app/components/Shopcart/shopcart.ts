@@ -12,15 +12,7 @@ import {
 } from '@ionic/angular/standalone';
 import { HeaderComponent } from '../../components/header/header.component';
 import { FooterComponent } from '../../components/footer/footer.component';
-
-interface CartItem {
-  id: number;
-  name: string;
-  image: string;
-  size: string;
-  price: number;
-  quantity: number;
-}
+import { CartService, CartItem } from '../../services/cart.service';
 
 @Component({
   selector: 'app-shopcart',
@@ -45,10 +37,12 @@ export class ShopcartPage implements OnInit {
 
   cartItems: CartItem[] = [];
   shippingCost: number = 5000;
+  currentCartId: number | null = null;
 
   constructor(
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private cartService: CartService
   ) {}
 
   ngOnInit() {
@@ -72,54 +66,43 @@ export class ShopcartPage implements OnInit {
   }
 
   loadCart() {
-    // Datos de ejemplo
-    this.cartItems = [
-      {
-        id: 1,
-        name: 'Ferrari Black Racing Jacket',
-        image: 'assets/product1.jpg',
-        size: 'L',
-        price: 60000,
-        quantity: 1
+    this.cartService.getUserCart().subscribe({
+      next: (data) => {
+        this.currentCartId = data.id;
+        this.cartItems = data.items || [];
       },
-      {
-        id: 2,
-        name: 'Ford Racing Jacket',
-        image: 'assets/product3.jpg',
-        size: 'M',
-        price: 60000,
-        quantity: 2
+      error: (err) => {
+        console.error('Error cargando carrito:', err);
       }
-    ];
+    });
   }
 
   increaseQuantity(index: number) {
-    this.cartItems[index].quantity++;
-    this.saveCart();
+    const item = this.cartItems[index];
+    const newQuantity = item.quantity + 1;
+    this.cartService.updateCartItem(item.id!, newQuantity).subscribe(() => this.loadCart());
   }
 
   decreaseQuantity(index: number) {
-    if (this.cartItems[index].quantity > 1) {
-      this.cartItems[index].quantity--;
-      this.saveCart();
+    const item = this.cartItems[index];
+    if (item.quantity > 1) {
+      const newQuantity = item.quantity - 1;
+      this.cartService.updateCartItem(item.id!, newQuantity).subscribe(() => this.loadCart());
     }
   }
 
   async removeItem(index: number) {
+    const item = this.cartItems[index];
     const alert = await this.alertController.create({
       header: 'Eliminar producto',
       message: '¿Estás seguro de que deseas eliminar este producto del carrito?',
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel'
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar',
           role: 'destructive',
           handler: () => {
-            this.cartItems.splice(index, 1);
-            this.saveCart();
+            this.cartService.removeCartItem(item.id!).subscribe(() => this.loadCart());
           }
         }
       ]
@@ -133,15 +116,14 @@ export class ShopcartPage implements OnInit {
   }
 
   getSubtotal(): number {
-    return this.cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    // Asegura que item.product exista y tenga el campo precio
+    return this.cartItems.reduce((total, item) => {
+      return total + (item.product?.price || 0) * item.quantity;
+    }, 0);
   }
 
   getTotal(): number {
     return this.getSubtotal() + this.shippingCost;
-  }
-
-  saveCart() {
-    // TODO: Guardar en localStorage o servicio
   }
 
   async checkout() {
@@ -154,12 +136,10 @@ export class ShopcartPage implements OnInit {
       await alert.present();
       return;
     }
-
-    // TODO: Navegar a checkout
     this.router.navigate(['/checkout']);
   }
 
   continueShopping() {
-    window.location.href = '/home';
+    this.router.navigate(['/home']);
   }
 }

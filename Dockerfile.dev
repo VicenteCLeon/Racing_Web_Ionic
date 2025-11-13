@@ -1,0 +1,17 @@
+FROM node:18-bullseye
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y libstdc++6
+
+RUN npm install -g @angular/cli
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 4200
+
+CMD ["ng", "serve", "--host", "0.0.0.0"]

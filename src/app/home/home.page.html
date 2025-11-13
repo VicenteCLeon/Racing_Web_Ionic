@@ -2,20 +2,15 @@
 
 <ion-content [fullscreen]="true">
 
-  <!-- Sección de usuario autenticado -->
-  <div class="user-welcome" *ngIf="currentUser">
-    <div class="welcome-content">
-      <span class="welcome-text">¡Hola, <strong>{{ currentUser.username }}</strong>! 👋</span>
-      <div class="user-buttons">
-        <ion-button size="small" fill="outline" (click)="goToProfile()">
-          Mi Perfil
-        </ion-button>
-        <ion-button size="small" fill="outline" color="danger" (click)="onLogout()">
-          Cerrar Sesión
-        </ion-button>
-      </div>
-    </div>
+ 
+  <!-- Banner principal -->
+  <div class="hero-banner">
+  <img src="assets/banner-f1.jpg" alt="Racing F1 Banner" class="hero-image" />
+  <div class="hero-overlay">
+    <h1 class="hero-title">Racing con Estilo</h1>
+    <p class="hero-subtitle">Racing Jackets y accesorios</p>
   </div>
+</div>
 
   <div class="product-section">
     <div class="product-header">

@@ -46,13 +46,28 @@ export const createProduct = async (req: AuthRequest, res: Response): Promise<vo
 // GET /api/products - Obtener todos los productos
 export const getAllProducts = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const products = await Product.findAll({
-      include: [{ association: 'category' }]
+    // Parámetros de paginación, con valores por defecto
+    const page = parseInt(req.query.page as string) || 1;
+    const size = parseInt(req.query.size as string) || 10;
+    const offset = (page - 1) * size;
+    const limit = size;
+
+    // Consulta con paginación y selección de campos necesarios
+    const products = await Product.findAndCountAll({
+      attributes: ['id', 'name', 'price', 'imageUrl', 'stock'],
+      include: [{ association: 'category', attributes: ['id', 'name'] }],
+      limit,
+      offset,
+      order: [['name', 'ASC']],
     });
 
+    // Respuesta con metadatos de paginación
     res.json({
       message: 'Productos obtenidos exitosamente',
-      products
+      totalItems: products.count,
+      totalPages: Math.ceil(products.count / size),
+      currentPage: page,
+      products: products.rows,
     });
   } catch (error) {
     console.error('❌ Error al obtener productos:', error);
@@ -63,7 +78,7 @@ export const getAllProducts = async (req: AuthRequest, res: Response): Promise<v
 // GET /api/products/:id - Obtener producto por ID
 export const getProductById = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { id } = req.params;
+    const id = Number(req.params.id);
 
     const product = await Product.findByPk(id, {
       include: [{ association: 'category' }]
@@ -83,6 +98,7 @@ export const getProductById = async (req: AuthRequest, res: Response): Promise<v
     res.status(500).json({ message: 'Error al obtener producto' });
   }
 };
+
 
 // PUT /api/products/:id - Actualizar producto
 export const updateProduct = async (req: AuthRequest, res: Response): Promise<void> => {

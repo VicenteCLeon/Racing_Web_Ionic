@@ -1,110 +1,108 @@
-/* === ESTILOS PARA EL HEADER === */
-
 ion-toolbar {
-  --background: var(--header-bg);
-  --border-color: var(--header-border);
-  --border-width: 0 0 1px 0;
+  height: 50px;
+  min-height: 50px;
+  padding-left: 0;
+  padding-right: 1rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.header-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  z-index: 1;
 }
 
 .header-logo {
-  height: 30px;
-  margin-left: 10px;
+  height: 56px;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 0;
 }
 
 .desktop-nav {
   position: absolute;
   left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   display: flex;
-  justify-content: center;
+  gap: 20px;
   align-items: center;
-  gap: 25px;
-  z-index: 10;
+  z-index: 0;
 
   a {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.4px;
+    color: #000000;
     transition: color 0.3s;
-    color: var(--text-color);
+    cursor: pointer;
   }
-  
-  color: var(--text-color);
-  z-index: 10;
-
   a:hover {
-    color: #666;
+    color: #e10600;
   }
+}
 
-  a.destacado {
-    color: #ff0000;
-  }
+.user-actions ion-button {
+  margin-left: 0.5rem;
 }
 
 ion-button {
-  --color: var(--text-color);
+  --padding-top: 0;
+  --padding-bottom: 0;
+  font-size: 13px;
+  height: 32px;
 }
 
-.theme-icon-dark {
+.mobile-menu-btn {
   display: none;
-}
-.theme-icon-light {
-  display: block;
+  flex-shrink: 0;
 }
 
-:host-context(body.dark) .theme-icon-dark {
-  display: block;
-}
-:host-context(body.dark) .theme-icon-light {
-  display: none;
-}
-
-ion-toolbar ion-button {
-  ion-icon {
-    color: var(--text-color) !important;
+/* Responsive para móvil */
+@media (max-width: 768px) {
+  .desktop-nav,
+  .action-buttons {
+    display: none;
   }
 
-  &:hover {
-    opacity: 0.7;
+  .mobile-menu-btn {
+    display: flex;
+  }
+
+  .header-title-group {
+    flex-basis: auto;
+    justify-content: flex-start;
+    h2 {
+      display: none;
+    }
+    .header-logo {
+      height: 40px;
+      margin-right: 0;
+    }
   }
 }
 
-/* === ESTILOS PARA EL MENÚ MÓVIL === */
-
+/* Menú móvil: oculto por defecto, visible solo con .active */
 .mobile-nav {
   display: none;
   position: fixed;
-  top: 60px;
+  top: 50px;
   left: 0;
-  width: 100%;
-  background-color: var(--header-bg);
+  right: 0;
+  background: rgb(0, 0, 0);
+  z-index: 1000;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 999;
+  padding: 1rem;
+}
 
-  &.active {
-    display: block;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-
-  li a {
-    display: block;
-    padding: 15px 20px;
-    color: var(--text-color);
-    text-decoration: none;
-    font-weight: 500;
-    border-bottom: 1px solid var(--header-border);
-    cursor: pointer;
-
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-    }
-  }
-
+.mobile-nav.active {
+  display: block;
 }

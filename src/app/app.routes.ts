@@ -30,7 +30,7 @@ export const routes: Routes = [
   },
   {
     path: 'shopcart',
-    loadComponent: () => import('./pages/shopcart/shopcart').then(m => m.ShopcartPage),
+    loadComponent: () => import('./components/Shopcart/shopcart').then(m => m.ShopcartPage),
     canActivate: [authGuard]
   },
 

@@ -59,27 +59,36 @@ export const changePassword = async (req: AuthRequest, res: Response): Promise<v
 // GET /api/users - Listar todos los usuarios
 export const getAllUsers = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    // ✅ NUEVO: Verificar si es admin
     if (req.user?.role !== 'admin') {
       res.status(403).json({ message: 'No tienes permisos para ver todos los usuarios' });
       return;
     }
 
-    const users = await User.findAll({
-      attributes: { exclude: ['password'] }
-    });
+    const page = parseInt(req.query.page as string) || 1;
+    const size = parseInt(req.query.size as string) || 10;
+    const offset = (page - 1) * size;
+    const limit = size;
 
-    console.log(`✅ Listando ${users.length} usuarios (Admin: ${req.user.email})`);
+    const users = await User.findAndCountAll({
+      attributes: { exclude: ['password'] },
+      limit,
+      offset,
+      order: [['username', 'ASC']],
+    });
 
     res.json({
       message: 'Usuarios obtenidos exitosamente',
-      users
+      totalItems: users.count,
+      totalPages: Math.ceil(users.count / size),
+      currentPage: page,
+      users: users.rows,
     });
   } catch (error) {
     console.error('❌ Error al obtener usuarios:', error);
     res.status(500).json({ message: 'Error al obtener usuarios' });
   }
 };
+
 
 // GET /api/users/:id - Obtener un usuario por ID
 export const getUserById = async (req: AuthRequest, res: Response): Promise<void> => {

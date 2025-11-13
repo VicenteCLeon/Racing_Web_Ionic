@@ -47,9 +47,8 @@
               <span>{{ quantity }}</span>
               <ion-button fill="clear" (click)="changeQuantity(1)">+</ion-button>
             </div>
-            <ion-button expand="block" class="add-to-cart-btn" (click)="addToCart()">
-              AÑADIR AL CARRITO
-            </ion-button>
+            <ion-button (click)="addProductToCart(product)">AÑADIR AL CARRITO</ion-button>
+
           </div>
 
           <ion-button expand="block" color="danger" class="buy-now-btn">COMPRAR AHORA</ion-button>

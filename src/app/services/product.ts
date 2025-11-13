@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 
 export interface Product {
   id?: number;
@@ -87,20 +88,20 @@ export class ProductService {
   // ============================================
 
   getJacketProducts(): Observable<Product[]> {
-    if (!this.useBackend) {
-      console.log('📦 Usando datos MOCK para chaquetas');
-      return of(this.allProducts.filter(p => p.type === 'chaqueta'));
-    }
-
-    console.log('🌐 Cargando chaquetas desde BACKEND');
-    return this.http.get<any>(`${this.apiUrl}`, { headers: this.getHeaders() }).pipe(
-      map(response => response.products.filter((p: Product) => p.categoryId === 1)),
-      catchError(error => {
-        console.error('❌ Error al cargar desde backend, usando MOCK:', error);
-        return of(this.allProducts.filter(p => p.type === 'chaqueta'));
-      })
-    );
+  if (!this.useBackend) {
+    return of(this.allProducts.filter(p => p.type === 'chaqueta'));
   }
+
+  return this.http.get<any>(`${this.apiUrl}`, { headers: this.getHeaders() }).pipe(
+    map(response => response.products.filter((p: Product) => p.category?.id === 1)),
+    tap(products => console.log('Chaquetas filtradas:', products)),
+    catchError(error => {
+      console.error('❌ Error, usando MOCK:', error);
+      return of(this.allProducts.filter(p => p.type === 'chaqueta'));
+    })
+  );
+}
+
 
   getAccessoryProducts(): Observable<Product[]> {
     if (!this.useBackend) {

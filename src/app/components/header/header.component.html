@@ -1,9 +1,8 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <!-- Logo (SIN CLICK) -->
-    <h1 slot="start" style="margin: 0;">
-      🏁 RACING
-    </h1>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <a href="/home"><img src="assets/logo.svg" alt="RCNG Logo" class="header-logo" /></a>
+    </ion-buttons>
 
     <!-- Navegación en desktop -->
     <ion-buttons slot="end" class="desktop-nav">
@@ -12,88 +11,46 @@
       <a (click)="goToAccessories()" class="nav-link">Accesorios</a>
     </ion-buttons>
 
-    <!-- Botones según estado -->
-    <ion-buttons slot="end" class="action-buttons">
-      <!-- ✅ GUEST (No autenticado) -->
-      <ng-container *ngIf="!isLoggedIn">
-        <ion-button (click)="goToLogin()" color="light">
-          Iniciar Sesión
-        </ion-button>
-        <ion-button (click)="goToRegister()" color="light" fill="outline">
-          Registrarse
-        </ion-button>
-      </ng-container>
+    <!-- Botones de acción principales -->
+    <ion-buttons slot="end" class="user-actions">
+      <ion-button (click)="toggleTheme()">
+        <ion-icon slot="icon-only" name="sunny-outline" class="theme-icon-light"></ion-icon>
+        <ion-icon slot="icon-only" name="moon-outline" class="theme-icon-dark"></ion-icon>
+      </ion-button>
 
-      <!-- ✅ USER (Autenticado, no admin) -->
-      <ng-container *ngIf="isLoggedIn && !isAdmin">
-        <ion-button (click)="goToCart()" color="light">
-          🛒 Carrito
-        </ion-button>
-        <ion-button (click)="goToProfile()" color="light">
-          👤 Perfil
-        </ion-button>
-        <ion-button color="light" (click)="logout()">
-          Salir
-        </ion-button>
-      </ng-container>
+      <ion-button (click)="goToCart()" color="light">
+        <ion-icon slot="icon-only" name="cart-outline"></ion-icon>
+      </ion-button>
 
-      <!-- ✅ ADMIN -->
-      <ng-container *ngIf="isAdmin">
-        <ion-button [routerLink]="['/admin']" color="danger">
-          ⚙️ Admin
+      <ng-container *ngIf="isLoggedIn; else notLoggedIn">
+        <ion-button (click)="goToProfile()" color="light" title="Perfil">
+          <ion-icon slot="icon-only" name="person-outline"></ion-icon>
         </ion-button>
-        <ion-button (click)="goToAdminUsers()" color="danger">
-          👥 Usuarios
-        </ion-button>
-        <ion-button (click)="goToProfile()" color="light">
-          👤 Perfil
-        </ion-button>
-        <ion-button color="light" (click)="logout()">
-          Salir
+        <ion-button (click)="logout()" color="danger" title="Cerrar sesión">
+          Cerrar sesión
         </ion-button>
       </ng-container>
+      <ng-template #notLoggedIn>
+        <ion-button (click)="goToLogin()" color="light" title="Iniciar sesión">
+          <ion-icon slot="icon-only" name="person-outline"></ion-icon>
+        </ion-button>
+      </ng-template>
     </ion-buttons>
 
-    <!-- Menú móvil -->
+    <!-- Botón menú móvil -->
     <ion-buttons slot="end" class="mobile-menu-btn">
       <ion-button (click)="toggleMobileMenu()">
         <ion-icon name="menu"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-
-  <!-- Menú móvil desplegable -->
-  <ion-toolbar *ngIf="isMobileMenuOpen" color="light" class="mobile-menu">
-    <ion-buttons vertical="true">
-      <a (click)="goToHome(); isMobileMenuOpen = false" class="mobile-nav-link">Inicio</a>
-      <a (click)="goToJackets(); isMobileMenuOpen = false" class="mobile-nav-link">Chaquetas</a>
-      <a (click)="goToAccessories(); isMobileMenuOpen = false" class="mobile-nav-link">Accesorios</a>
-      
-      <div class="mobile-divider"></div>
-
-      <!-- GUEST -->
-      <ng-container *ngIf="!isLoggedIn">
-        <a (click)="goToLogin(); isMobileMenuOpen = false" class="mobile-nav-link">Iniciar Sesión</a>
-        <a (click)="goToRegister(); isMobileMenuOpen = false" class="mobile-nav-link">Registrarse</a>
-      </ng-container>
-
-      <!-- USER -->
-      <ng-container *ngIf="isLoggedIn && !isAdmin">
-        <a (click)="goToCart(); isMobileMenuOpen = false" class="mobile-nav-link">🛒 Carrito</a>
-        <a (click)="goToProfile(); isMobileMenuOpen = false" class="mobile-nav-link">👤 Perfil</a>
-      </ng-container>
-
-      <!-- ADMIN -->
-      <ng-container *ngIf="isAdmin">
-        <a [routerLink]="['/admin']" class="mobile-nav-link" (click)="isMobileMenuOpen = false">⚙️ Admin</a>
-        <a (click)="goToAdminUsers(); isMobileMenuOpen = false" class="mobile-nav-link">👥 Usuarios</a>
-        <a (click)="goToProfile(); isMobileMenuOpen = false" class="mobile-nav-link">👤 Perfil</a>
-      </ng-container>
-
-      <div class="mobile-divider"></div>
-      <a class="mobile-nav-link logout" (click)="logout(); isMobileMenuOpen = false" *ngIf="isLoggedIn">
-        Cerrar Sesión
-      </a>
-    </ion-buttons>
-  </ion-toolbar>
 </ion-header>
+
+<!-- Menú móvil, solo visible si isMobileMenuOpen==true -->
+<div class="mobile-nav" [class.active]="isMobileMenuOpen">
+  <ul>
+    <li><a href="/home">INICIO</a></li>
+    <li><a href="/jackets">CHAQUETAS</a></li>
+    <li><a href="/accessories">ACCESORIOS</a></li>
+  </ul>
+</div>

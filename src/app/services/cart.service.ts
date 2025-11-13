@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 export interface CartItem {
   id?: number;
@@ -11,12 +11,14 @@ export interface CartItem {
   product?: any;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class CartService {
   private apiUrl = 'http://localhost:3000/api/carts';
   private itemsApiUrl = 'http://localhost:3000/api/cart-items';
+  private currentCartId: number | null = null;
+
+  private cartChanged = new BehaviorSubject<void>(undefined);
+  cartChanged$ = this.cartChanged.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -26,6 +28,18 @@ export class CartService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
+  }
+
+  setCurrentCartId(id: number) {
+    this.currentCartId = id;
+  }
+
+  getCurrentCartId(): number | null {
+    return this.currentCartId;
+  }
+
+  notifyCartChanged() {
+    this.cartChanged.next();
   }
 
   createCart(): Observable<any> {
